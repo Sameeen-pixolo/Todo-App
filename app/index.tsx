@@ -14,6 +14,8 @@ export default function HomeScreen() {
   const [inputValue, setInputValue] = useState("");
   const [todoList, setTodoList] = useState<string[]>([]);
   const [todoListCompleted, setTodoListCompleted] = useState<string[]>([]);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -23,10 +25,12 @@ export default function HomeScreen() {
         onChangeText={setInputValue}
         cursorColor="white"
         onEndEditing={() => {
-          setTodoList([...todoList, inputValue]);
-          setInputValue("");
+          if (inputValue.length > 0) {
+            setTodoList([...todoList, inputValue]);
+            setInputValue("");
+          }
         }}
-      ></TextInput>
+      />
 
       {/* Todo list */}
       <FlatList
@@ -34,8 +38,33 @@ export default function HomeScreen() {
         data={todoList}
         renderItem={({ item, index, separators }) => (
           <View style={styles.todoItem}>
-            <Text>{item}</Text>
+            {
+            // isEditMode ? (
+            //   <TextInput
+            //     value={item}
+            //     style={styles.textInput}
+            //     onChangeText={setInputValue}
+            //     cursorColor="white"
+            //     onEndEditing={() => {
+            //       if (inputValue.length > 0) {
+            //         setTodoList([...todoList, inputValue]);
+            //         setInputValue("");
+            //         setIsEditMode(false)
+            //       }
+            //     }}
+            //   />
+            // ) :
+             (
+              <Text
+                style={styles.todoText}
+                onPress={() => setIsEditMode(true)}
+              >
+                {item}
+              </Text>
+            )}
+
             <Pressable
+              style={styles.buttonStyle}
               onPress={() => {
                 const tempArray = [...todoList];
                 if (index > -1) {
@@ -61,11 +90,12 @@ export default function HomeScreen() {
         data={todoListCompleted}
         renderItem={({ item, index, separators }) => (
           <View style={styles.todoItem}>
-            <Text style={styles.todoCompleted}>{item}</Text>
+            <Text style={[styles.todoCompleted, styles.todoText]}>{item}</Text>
 
             <View style={styles.buttonsContainer}>
               {/* Delete item */}
               <Pressable
+                style={styles.buttonStyle}
                 onPress={() => {
                   const tempArray = [...todoListCompleted];
                   if (index > -1) {
@@ -83,6 +113,7 @@ export default function HomeScreen() {
 
               {/* Restore item */}
               <Pressable
+                style={styles.buttonStyle}
                 onPress={() => {
                   setTodoList([...todoList, todoListCompleted[index]]);
                   const tempArray = [...todoListCompleted];
@@ -140,6 +171,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     marginBottom: 6,
   },
+  buttonStyle: { padding: 2 },
+  todoText: { maxWidth: "75%" },
   todoCompleted: {
     textDecorationLine: "line-through",
   },
