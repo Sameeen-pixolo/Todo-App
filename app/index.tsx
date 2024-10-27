@@ -16,6 +16,18 @@ export default function HomeScreen() {
   const [todoListCompleted, setTodoListCompleted] = useState<string[]>([]);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
+  // Function to handle submit or end of editing event on input field.
+  const handleSubmit = () => {
+    if (inputValue.length > 0) {
+      setTodoList([...todoList, inputValue]);
+      setInputValue("");
+    }
+  };
+
+  const NoTasksTodoFallback = () => {
+    return <p style={styles.fallbackText}>No Tasks in Todo</p>
+  };
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -24,44 +36,37 @@ export default function HomeScreen() {
         placeholder="Enter task"
         onChangeText={setInputValue}
         cursorColor="white"
-        onEndEditing={() => {
-          if (inputValue.length > 0) {
-            setTodoList([...todoList, inputValue]);
-            setInputValue("");
-          }
-        }}
+        onSubmitEditing={handleSubmit}
+        onEndEditing={handleSubmit}
       />
 
       {/* Todo list */}
       <FlatList
         style={styles.flatListStyle}
+        ListEmptyComponent={NoTasksTodoFallback}
         data={todoList}
         renderItem={({ item, index, separators }) => (
           <View style={styles.todoItem}>
             {
-            // isEditMode ? (
-            //   <TextInput
-            //     value={item}
-            //     style={styles.textInput}
-            //     onChangeText={setInputValue}
-            //     cursorColor="white"
-            //     onEndEditing={() => {
-            //       if (inputValue.length > 0) {
-            //         setTodoList([...todoList, inputValue]);
-            //         setInputValue("");
-            //         setIsEditMode(false)
-            //       }
-            //     }}
-            //   />
-            // ) :
-             (
-              <Text
-                style={styles.todoText}
-                onPress={() => setIsEditMode(true)}
-              >
+              // isEditMode ? (
+              //   <TextInput
+              //     value={item}
+              //     style={styles.textInput}
+              //     onChangeText={setInputValue}
+              //     cursorColor="white"
+              //     onEndEditing={() => {
+              //       if (inputValue.length > 0) {
+              //         setTodoList([...todoList, inputValue]);
+              //         setInputValue("");
+              //         setIsEditMode(false)
+              //       }
+              //     }}
+              //   />
+              // ) :
+              <Text style={styles.todoText} onPress={() => setIsEditMode(true)}>
                 {item}
               </Text>
-            )}
+            }
 
             <Pressable
               style={styles.buttonStyle}
@@ -137,6 +142,8 @@ export default function HomeScreen() {
   );
 }
 
+// ------------- STYLESHEET --------------------
+
 const styles = StyleSheet.create({
   container: {
     display: "flex",
@@ -181,4 +188,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
   },
+  fallbackText:{
+    textAlign:"center",
+    fontFamily:"Segoe UI",
+    fontSize:12
+  }
 });
