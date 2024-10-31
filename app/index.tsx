@@ -25,7 +25,7 @@ export default function HomeScreen() {
   };
 
   const NoTasksTodoFallback = () => {
-    return <p style={styles.fallbackText}>No Tasks in Todo List</p>
+    return <p style={styles.fallbackText}>No Tasks in Todo</p>
   };
 
   return (
